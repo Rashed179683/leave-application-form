@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>নৈমিত্তিক ছুটির আবেদন ফর্ম</title>
+    <!-- Tailwind CSS লোড করা হয়েছে -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* বাংলা ফন্ট ইম্পোর্ট করা হয়েছে */
+        @import url('https://fonts.googleapis.com/css2?family=Tiro+Bangla&display=swap');
+        
+        body {
+            font-family: 'Tiro Bangla', sans-serif;
+            background: linear-gradient(135deg, #dcfce7 0%, #fca5a5 100%); /* হালকা সবুজ-লাল গ্র্যাডিয়েন্ট ব্যাকগ্রাউন্ড */
+            color: #1a202c;
+            -webkit-print-color-adjust: exact;
+            color-adjust: exact;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+        }
+        .container {
+            max-width: 650px;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+            animation: fadeIn 0.8s ease-in-out;
+        }
+        .app-header {
+            text-align: center;
+            margin-bottom: 0;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #b91c1c; /* গাঢ় লাল হেডারের রঙ */
+            position: relative;
+        }
+        .app-header::after {
+            content: '';
+            display: block;
+            width: 70px;
+            height: 5px;
+            background: #ef4444; /* হেডারের নিচে আরও উজ্জ্বল লাল লাইন */
+            margin: 0.5rem auto 0;
+            border-radius: 2px;
+        }
+        .leave-form label {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-weight: 600;
+            color: #15803d; /* লেবেলের জন্য গাঢ় সবুজ রঙ */
+        }
+        .leave-form input, .leave-form textarea {
+            width: 100%;
+            padding: 8px; /* ইনপুট বক্সের প্যাডিং কমানো হয়েছে */
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            transition: all 0.3s ease-in-out;
+            background: #f0fdf4; /* ইনপুট ফিল্ডের হালকা সবুজ ব্যাকগ্রাউন্ড */
+            color: #1a202c;
+        }
+        .leave-form input:focus, .leave-form textarea:focus {
+            outline: none;
+            border-color: #22c55e;
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.4);
+        }
+        .application-text {
+            line-height: 1.8;
+            white-space: pre-wrap;
+        }
+        /* প্রিন্ট বা ডাউনলোড করার সময় ফর্মের অংশটি লুকানোর জন্য */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                background: none;
+                padding: 0;
+            }
+            .print-section {
+                page-break-inside: avoid !important;
+                page-break-after: avoid !important;
+            }
+        }
+        /* পিডিএফ ডাউনলোড প্রিভিউ লুকাতে */
+        #applicationPreview {
+            display: none;
+        }
+        .print-only {
+            display: none;
+        }
+        @media print {
+            .print-only {
+                display: block;
+            }
+        }
+        /* Modal styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal.flex {
+            display: flex;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+        }
+        .button-primary {
+            background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
+            color: white;
+            font-weight: bold;
+            padding: 12px 30px;
+            border-radius: 999px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .button-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+        .button-secondary {
+            background: #ef4444;
+            color: white;
+            font-weight: bold;
+            padding: 12px 30px;
+            border-radius: 999px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .button-secondary:hover {
+            transform: translateY(-2px);
+            background: #dc2626;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* প্রিভিউ লেখার রঙ */
+        #previewContent p {
+            color: #1a2e05; /* প্রিভিউ লেখার জন্য গাঢ় সবুজ রঙ */
+        }
+        #previewContent .binit-nivedak {
+            color: #b91c1c; /* বিনীত নিবেদক লেখার জন্য গাঢ় লাল রঙ */
+            font-weight: bold;
+        }
+        #previewContent .officer-sign {
+            color: #94a3b8; /* অফিসিয়াল অংশের জন্য ধূসর রঙ */
+        }
+    </style>
+</head>
+<body class="p-4">
+    <div class="container no-print">
+        <h1 class="app-header">নৈমিত্তিক ছুটির আবেদন ফর্ম</h1>
+        <p class="text-sm text-center text-gray-600 mb-6">ডিজাইনঃ রাশেদ, CHCP</p>
+        
+        <form id="leaveForm" class="leave-form space-y-5">
+            <!-- প্রাপকের তথ্য -->
+            <div>
+                <label for="toOfficer" class="text-sm">বরাবর (পদবী):</label>
+                <input type="text" id="toOfficer" value="উপজেলা স্বাস্থ্য ও পরিবার পরিকল্পনা কর্মকর্তা," class="w-full">
+            </div>
+            <div>
+                <label for="toAddress" class="text-sm">ঠিকানা:</label>
+                <input type="text" id="toAddress" value="শার্শা, যশোর।" class="w-full">
+            </div>
+            
+            <!-- বিষয় -->
+            <div>
+                <label for="subject" class="text-sm">বিষয়:</label>
+                <input type="text" id="subject" value="নৈমিত্তিক ছুটির জন্য আবেদন।" class="w-full">
+            </div>
+            
+            <p class="mt-4 mb-2 text-lg">জনাব,</p>
+            
+            <!-- মূল আবেদন -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div>
+                    <label for="startDate">ছুটির শুরুর তারিখ:</label>
+                    <input type="date" id="startDate" class="w-full">
+                </div>
+                <div>
+                    <label for="endDate">ছুটির শেষের তারিখ:</label>
+                    <input type="date" id="endDate" class="w-full">
+                </div>
+            </div>
+            
+            <p class="mt-3 text-center text-lg">
+                <span class="font-bold text-gray-800">মোট <span id="totalDaysText" class="text-blue-600">...</span> দিন নৈমিত্তিক ছুটির প্রয়োজন।</span>
+            </p>
+            
+            <div>
+                <label for="leaveReason">(ক) ছুটি ভোগের কারণ:</label>
+                <input type="text" id="leaveReason" placeholder="কারণ লিখুন" class="w-full">
+            </div>
+            
+            <!-- ছুটি কালীন ঠিকানা -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div>
+                    <label for="village">(খ) ছুটি কালীন ঠিকানা- গ্রাম:</label>
+                    <input type="text" id="village" placeholder="গ্রাম" class="w-full">
+                </div>
+                <div>
+                    <label for="postOffice">ডাকঘর:</label>
+                    <input type="text" id="postOffice" placeholder="ডাকঘর" class="w-full">
+                </div>
+                <div>
+                    <label for="thana">থানা:</label>
+                    <input type="text" id="thana" placeholder="থানা" class="w-full">
+                </div>
+                <div>
+                    <label for="district">জেলা:</label>
+                    <input type="text" id="district" placeholder="জেলা" class="w-full">
+                </div>
+            </div>
+            
+            <!-- বিনীত নিবেদক -->
+            <div class="mt-6 border-t border-gray-200 pt-5">
+                <h3 class="font-bold text-lg mb-3">বিনীত নিবেদক</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <label for="applicantName">নাম:</label>
+                        <input type="text" id="applicantName" placeholder="আপনার নাম" class="w-full">
+                    </div>
+                    <div>
+                        <label for="applicantPosition">পদবী:</label>
+                        <input type="text" id="applicantPosition" placeholder="আপনার পদবী" class="w-full">
+                    </div>
+                    <div>
+                        <label for="applicantWorkplace">কর্মস্থল:</label>
+                        <input type="text" id="applicantWorkplace" placeholder="আপনার কর্মস্থল" class="w-full">
+                    </div>
+                    <div>
+                        <label for="applicantMobile">মোবাইল নম্বর:</label>
+                        <input type="text" id="applicantMobile" placeholder="মোবাইল নম্বর" class="w-full">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- অফিস কর্তৃক পূরণযোগ্য ও দায়িত্ব পালনকারীর তথ্য -->
+            <div class="mt-6 border-t border-gray-200 pt-5">
+                <h3 class="font-bold text-lg mb-3 text-center">অফিস কর্তৃক পুরণযোগ্য</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <p class="mb-2">(ক) তাহার ............ দিন ছুটি পাওনা আছে।</p>
+                        <p>(খ) তাহার অনুপস্থিতিতে স্থানীয় ভাবে দায়িত্ব চালাইয়া নেওয়া হবে।</p>
+                    </div>
+                    <div>
+                        <p class="font-bold">(গ) আমি তাহার দায়িত্ব পালনে সম্মত আছি।</p>
+                        <label for="responsibleName">নাম:</label>
+                        <input type="text" id="responsibleName" placeholder="দায়িত্ব পালনকারীর নাম" class="w-full">
+                    </div>
+                    <div>
+                        <label for="responsiblePosition">পদবী:</label>
+                        <input type="text" id="responsiblePosition" placeholder="দায়িত্ব পালনকারীর পদবী" class="w-full">
+                    </div>
+                    <div>
+                        <label for="responsibleWorkplace">কর্মস্থল:</label>
+                        <input type="text" id="responsibleWorkplace" placeholder="দায়িত্ব পালনকারীর কর্মস্থল" class="w-full">
+                    </div>
+                    <div>
+                        <label for="responsibleMobile">মোবাইল নম্বর:</label>
+                        <input type="text" id="responsibleMobile" placeholder="দায়িত্ব পালনকারীর মোবাইল নম্বর" class="w-full">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex justify-center mt-8 space-x-4">
+                <button type="button" id="generateButton" class="button-primary">
+                    আবেদন তৈরি করুন
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- আবেদনপত্রের প্রিভিউ এবং বাটন -->
+    <div id="applicationPreview" class="application-container p-6">
+        <div id="previewContent" class="print-section bg-white p-8 rounded-lg shadow-lg"></div>
+        <div class="flex justify-center mt-6 space-x-4 no-print">
+            <button onclick="window.print()" class="button-primary">
+                আবেদন প্রিন্ট করুন (PDF)
+            </button>
+            <button onclick="editApplication()" class="button-secondary">
+                সম্পাদনা করুন
+            </button>
+        </div>
+    </div>
+    
+    <!-- Modal for messages (alert() এর পরিবর্তে) -->
+    <div id="message-modal" class="modal">
+        <div class="modal-content">
+            <p id="modal-message" class="text-lg font-medium text-gray-800 mb-4"></p>
+            <button onclick="closeModal()" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md focus:outline-none">ঠিক আছে</button>
+        </div>
+    </div>
+
+    <script>
+        // সংখ্যাকে বাংলায় রূপান্তর করার জন্য একটি সহায়ক ফাংশন
+        function toBengaliNumber(num) {
+            const bengali = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+            return String(num).split('').map(digit => {
+                if (/\d/.test(digit)) {
+                    return bengali[parseInt(digit, 10)];
+                }
+                return digit;
+            }).join('');
+        }
+        
+        // তারিখকে বাংলায় ফরম্যাট করার জন্য একটি সহায়ক ফাংশন
+        function formatBengaliDate(date) {
+            if (!date) return '';
+            const options = { day: 'numeric', month: 'long', year: 'numeric' };
+            try {
+                const [year, month, day] = date.split('-');
+                const d = new Date(year, month - 1, day);
+                return d.toLocaleDateString('bn-BD', options);
+            } catch (e) {
+                return date;
+            }
+        }
+
+        // কাস্টম মোডাল ফাংশন (alert() এর পরিবর্তে)
+        function showModal(message) {
+            document.getElementById('modal-message').textContent = message;
+            document.getElementById('message-modal').classList.add('flex');
+        }
+
+        function closeModal() {
+            document.getElementById('message-modal').classList.remove('flex');
+        }
+        
+        // মূল অ্যাপ্লিকেশন লজিক
+        document.addEventListener('DOMContentLoaded', () => {
+            const generateButton = document.getElementById('generateButton');
+            const previewSection = document.getElementById('applicationPreview');
+            const previewContent = document.getElementById('previewContent');
+            const totalDaysText = document.getElementById('totalDaysText');
+            
+            const startDateInput = document.getElementById('startDate');
+            const endDateInput = document.getElementById('endDate');
+
+            // দুটি তারিখের মধ্যে দিনের সংখ্যা গণনা করুন
+            const updateDays = () => {
+                const start = startDateInput.value;
+                const end = endDateInput.value;
+                if (start && end) {
+                    const oneDay = 24 * 60 * 60 * 1000;
+                    const startDate = new Date(start);
+                    const endDate = new Date(end);
+                    const diffDays = Math.round(Math.abs((endDate - startDate) / oneDay)) + 1;
+                    totalDaysText.textContent = toBengaliNumber(diffDays);
+                } else {
+                    totalDaysText.textContent = '...';
+                }
+            };
+            
+            startDateInput.addEventListener('change', updateDays);
+            endDateInput.addEventListener('change', updateDays);
+            
+            generateButton.addEventListener('click', () => {
+                const toOfficer = document.getElementById('toOfficer').value;
+                const toAddress = document.getElementById('toAddress').value;
+                const subject = document.getElementById('subject').value;
+                const startDate = startDateInput.value;
+                const endDate = endDateInput.value;
+                const leaveReason = document.getElementById('leaveReason').value;
+                const village = document.getElementById('village').value;
+                const postOffice = document.getElementById('postOffice').value;
+                const thana = document.getElementById('thana').value;
+                const district = document.getElementById('district').value;
+                const applicantName = document.getElementById('applicantName').value;
+                const applicantPosition = document.getElementById('applicantPosition').value;
+                const applicantWorkplace = document.getElementById('applicantWorkplace').value;
+                const applicantMobile = document.getElementById('applicantMobile').value;
+                const responsibleName = document.getElementById('responsibleName').value;
+                const responsiblePosition = document.getElementById('responsiblePosition').value;
+                const responsibleWorkplace = document.getElementById('responsibleWorkplace').value;
+                const responsibleMobile = document.getElementById('responsibleMobile').value;
+                const totalDays = totalDaysText.textContent;
+                const currentDate = formatBengaliDate(new Date().toISOString().split('T')[0]);
+
+                if (!startDate || !endDate || !applicantName) {
+                    showModal("অনুগ্রহ করে ছুটির তারিখ এবং আপনার নাম পূরণ করুন।");
+                    return;
+                }
+
+                // প্রিভিউ HTML তৈরি করা
+                const previewHtml = `
+                    <div style="font-family: 'Tiro Bangla', sans-serif; line-height: 1.8; color: #1a2e05; padding: 20px;">
+                        <div style="text-align: right; margin-bottom: 10px; font-size: 14px; color: #b91c1c;">
+                            ${currentDate}
+                        </div>
+                        <p style="margin: 0; padding: 0; font-weight: bold;">বরাবর,</p>
+                        <p style="margin: 0; padding: 0; margin-left: 20px;">${toOfficer}</p>
+                        <p style="margin: 0; padding: 0; margin-left: 20px;">${toAddress}</p>
+                        <p style="margin-top: 10px; padding: 0; font-weight: bold;">বিষয়ঃ- ${subject}</p>
+                        <p style="margin: 0; padding: 0;">জনাব,</p>
+                        <p style="margin-left: 20px; text-indent: -20px; margin-top: 10px; color: #15803d;">যথাবিহীত সম্মান প্রদর্শন পূর্বক বিনীত নিবেদন এই যে, আমার আগামী ${formatBengaliDate(startDate)} তারিখ হতে ${formatBengaliDate(endDate)} তারিখ পর্যন্ত মোট ${totalDays} দিন নৈমিত্তিক ছুটির প্রয়োজন।</p>
+                        <p style="margin-left: 20px; text-indent: -20px; color: #15803d;">অতএব জনাবের নিকট আকুল আবেদন আমাকে উক্ত ছুটি মঞ্জুর করে কর্মস্থল ত্যাগের অনুমতি দানে আপনার একান্ত মর্জি হয়।</p>
+                        <p style="margin-top: 10px; padding: 0;">(ক) ছুটি ভোগের কারণ... <span style="font-weight: bold; color: #22c55e;">${leaveReason}</span></p>
+                        <p style="margin: 0; padding: 0;">(খ) ছুটি কালীন ঠিকানাঃ- <span style="font-weight: bold; color: #22c55e;">গ্রামঃ- ${village}, ডাকঘর:- ${postOffice}, থানা ${thana}, জেলাঃ- ${district}</span></p>
+                        
+                        <div style="text-align: right; margin-top: 20px; color: #b91c1c;">
+                            <p style="margin: 0; padding: 0; font-weight: bold;">বিনীত নিবেদক</p>
+                            <p style="line-height: 1; margin: 0; padding: 0;">স্বাক্ষরঃ-.............................</p>
+                            <p style="margin: 0; padding: 0;">নামঃ <span style="font-weight: bold;">${applicantName}</span></p>
+                            <p style="margin: 0; padding: 0;">পদবীঃ <span style="font-weight: bold;">${applicantPosition}</span></p>
+                            <p style="margin: 0; padding: 0;">কর্মস্থল <span style="font-weight: bold;">${applicantWorkplace}</span></p>
+                            <p style="margin: 0; padding: 0;">মোবাইল নম্বর <span style="font-weight: bold;">${applicantMobile}</span></p>
+                        </div>
+                        
+                        <div style="margin-top: 20px; border-top: 1px dashed #ddd; padding-top: 20px; color: #94a3b8;">
+                            <p style="font-weight: bold; margin: 0; padding: 0; text-align: center;">অফিস কর্তৃক পুরণযোগ্য</p>
+                            <p style="margin: 0; padding: 0;">(ক) তাহার ............ দিন ছুটি পাওনা আছে।</p>
+                            <p style="margin: 0; padding: 0;">(খ) তাহার অনুপস্থিতিতে স্থানীয় ভাবে দায়িত্ব চালাইয়া নেওয়া হবে।</p>
+                            
+                            <p style="margin-top: 10px; padding: 0;">(গ) আমি তাহার দায়িত্ব পালনে সম্মত আছি।</p>
+                            <p style="line-height: 1; margin: 0; padding: 0;">স্বাক্ষরঃ-.............................</p>
+                            <p style="margin: 0; padding: 0;">নামঃ ${responsibleName}</p>
+                            <p style="margin: 0; padding: 0;">পদবীঃ- ${responsiblePosition}</p>
+                            <p style="margin: 0; padding: 0;">কর্মস্থল ${responsibleWorkplace}</p>
+                            <p style="margin: 0; padding: 0;">মোবাইল নম্বর ${responsibleMobile}</p>
+                        </div>
+                        
+                        <div style="margin-top: 20px;">
+                            <p style="margin: 0; padding: 0;">আবেদনকারীকে আগামী ${formatBengaliDate(startDate)} তারিখ হতে ${formatBengaliDate(endDate)} তারিখ পর্যন্ত মোট ${totalDays} দিন নৈমিত্তিক ছুটি মঞ্জুর করা হলো।</p>
+                            <div style="text-align: right; margin-top: 20px;">
+                                <p style="margin: 0; padding: 0;">উপজেলা স্বাস্থ্য ও পঃ পঃ কর্মকর্তা</p>
+                                <p style="margin: 0; padding: 0;">শার্শা, যশোর।</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                previewContent.innerHTML = previewHtml;
+                document.querySelector('.container').style.display = 'none';
+                previewSection.style.display = 'block';
+            });
+        });
+
+        // ফর্ম সম্পাদনা করার জন্য ফাংশন
+        function editApplication() {
+            document.querySelector('.container').style.display = 'block';
+            document.getElementById('applicationPreview').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
